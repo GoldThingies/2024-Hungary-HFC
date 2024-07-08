@@ -1,0 +1,138 @@
+/PROG  A_Washer_IG08624RH_R2
+/ATTR
+OWNER		= MNEDITOR;
+COMMENT		= "IG08624RH Robot 2";
+PROG_SIZE	= 2511;
+CREATE		= DATE 23-06-19  TIME 15:09:18;
+MODIFIED	= DATE 23-07-20  TIME 08:36:40;
+FILE_NAME	= ;
+VERSION		= 0;
+LINE_COUNT	= 114;
+MEMORY_SIZE	= 2983;
+PROTECT		= READ_WRITE;
+TCD:  STACK_SIZE	= 0,
+      TASK_PRIORITY	= 50,
+      TIME_SLICE	= 0,
+      BUSY_LAMP_OFF	= 0,
+      ABORT_REQUEST	= 0,
+      PAUSE_REQUEST	= 0;
+DEFAULT_GROUP	= 1,*,*,*,*;
+CONTROL_CODE	= 00000000 00000000;
+/APPL
+
+AUTO_SINGULARITY_HEADER;
+  ENABLE_SINGULARITY_AVOIDANCE   : TRUE;
+/MN
+   1:  !-- 2677 DANA ;
+   2:  !-- 04 30 24 ;
+   3:  !-- Exchange Washer ;
+   4:  !-- Input Gear Robot 2;
+   5:  !----------------------------- ;
+   6:  !-- CHANGE TOOL AND USER FRAME ;
+   7:  UTOOL_NUM=1 ;
+   8:  UFRAME_NUM=9 ;
+   9:J PR[5:Safe Washer Side] 100% CNT50    ;
+  10:   ;
+  11:  WAIT (DI[148:OFF:Wash Part 1 Req for L] OR DI[147:OFF:Wash Part 1 Req for U] OR DI[42:OFF:CYCLE STOP])    ;
+  12:  IF (DI[42:OFF:CYCLE STOP]),JMP LBL[1000] ;
+  13:   ;
+  14:  !-- PICK FROM WASH ;
+  15:  !----------------------------- ;
+  16:  IF (DI[147:OFF:Wash Part 1 Req for U]=ON AND DI[72:ON :G1 Part Present]=OFF) THEN ;
+  17:  !-- OPEN GRIPPER ;
+  18:  CALL GRIP_1_OPEN    ;
+  19:  !-- RESET SAFE OUTSIDE WASH ;
+  20:  DO[146:ON :Robot Clear Wash]=OFF ;
+  21:  WAIT (DI[146:OFF:Wash MT Clear])    ;
+  20:  !-- OFFSET SELECT BASED ON PART TYPE ;
+  20:  IF (F[23] OR F[24]),JMP LBL[1] ;
+  22:  !-- CHANGE TOOL AND USER FRAME ;
+  23:  UTOOL_NUM=1 ;
+  24:  UFRAME_NUM=9 ;
+  20:  !-- Approach - Gripper 1 ;
+  26:J PR[50] 100% CNT50   ;
+  81:  UTOOL_NUM=1 ;
+  27:L PR[R[102]] 2000mm/sec CNT10 Tool_Offset,PR[14]    ;
+  28:   ;
+  29:  !-- ADJUST COLLISION DETECT ;
+  30:  COL GUARD ADJUST R[39] ;
+  31:L PR[R[102]] 500mm/sec FINE    ;
+  32:  !-- CLOSE GRIPPER ;
+  33:  CALL GRIP_1_CLOSE    ;
+ 100:  WAIT    .50(sec) ;
+  34:   ;
+  35:  !-- GRIP CHECK - Open if no part ;
+  36:  IF (DI[72:ON :G1 Part Present]=OFF) THEN ;
+  37:  DO[66:OFF:G1 Grip Auto Req]=OFF ;
+  38:  DO[65:OFF:G1 Release Auto Req]=PULSE,0.5sec ;
+  39:  WAIT (DI[70:OFF:G1 Grip Released])    ;
+  40:  CALL SET_PAYLOAD    ;
+  41:  ENDIF ;
+  42:   ;
+  43:L PR[R[102]] 2000mm/sec CNT10 Tool_Offset,PR[14]    ;
+  44:   ;
+  20:  !-- Retreat - Gripper 1 ;
+  46:J PR[50] 100% CNT25  ;
+  47:   ;
+  20:  LBL[1]  ;
+  20:  !-- OFFSET SELECT FOR ASSEMBLY AND OUTPUT GEAR ;
+  22:  !-- CHANGE TOOL AND USER FRAME ;
+  23:  UTOOL_NUM=1 ;
+  24:  UFRAME_NUM=9 ;
+  20:  !-- Approach - Gripper 1 ;
+  26:  CALL SET_OFFS(26,0,0,0,(-90),0,0) ;
+  26:J PR[50] 100% CNT50 offset, PR[26];
+  27:L PR[R[102]] 2000mm/sec CNT10 Tool_Offset,PR[15]    ;
+  28:   ;
+  29:  !-- ADJUST COLLISION DETECT ;
+  30:  COL GUARD ADJUST R[39] ;
+  31:L PR[R[102]] 500mm/sec FINE    ;
+  32:  !-- CLOSE GRIPPER ;
+  33:  CALL GRIP_1_CLOSE    ;
+ 100:  WAIT    .50(sec) ;
+  34:   ;
+  35:  !-- GRIP CHECK - Open if no part ;
+  36:  IF (DI[72:ON :G1 Part Present]=OFF) THEN ;
+  37:  DO[66:OFF:G1 Grip Auto Req]=OFF ;
+  38:  DO[65:OFF:G1 Release Auto Req]=PULSE,0.5sec ;
+  39:  WAIT (DI[70:OFF:G1 Grip Released])    ;
+  40:  CALL SET_PAYLOAD    ;
+  41:  ENDIF ;
+  42:   ;
+  43:L PR[R[102]] 2000mm/sec CNT10 Tool_Offset,PR[14]    ;
+  44:   ;
+  20:  !-- Retreat - Gripper 1 ;
+  26:  CALL SET_OFFS(26,0,0,0,(-90),0,0) ;
+  26:J PR[50] 100% CNT50 offset, PR[26];
+  47:   ;
+  35:  !-- Part Tracking ;
+  48:  !-- IF PART PRESENT THEN ;
+  49:  IF (DI[72:ON :G1 Part Present]),DO[422:OFF:G1 from Wash]=ON ;
+  50:  DO[147:OFF:Part 1 Unloaded Wash]=ON ;
+  51:   ;
+  52:  !-- IF PURGE COMPLETE THEN ;
+  53:  IF (DI[43:OFF:PURGE REQUEST] AND DI[80:OFF:G2 Part Present]=OFF AND DI[176:OFF:Wash Empty]=ON),DO[151:OFF:Purge Part 1 Compl Wa]=ON ;
+  54:  !-- ADJUST COLLISION DETECT ;
+  55:  COL GUARD ADJUST R[39] ;
+  56:  DO[147:OFF:Part 1 Unloaded Wash]=ON ;
+  57:   ;
+  58:  IF (DI[43:OFF:PURGE REQUEST]=OFF AND DO[439:OFF:G2 from 260 OK]=ON) THEN ;
+  59:  WAIT (DI[148:OFF:Wash Part 1 Req for L]=ON)    ;
+  60:  ENDIF ;
+  61:   ;
+  62:  ENDIF ;
+  70:   ;
+ 103:  LBL[1000] ;
+ 104:  !-- CHANGE TOOL AND USER FRAME ;
+ 105:  UTOOL_NUM=1 ;
+ 106:  UFRAME_NUM=9 ;
+ 107:   ;
+ 108:  DO[147:OFF:Part 1 Unloaded Wash]=OFF ;
+ 109:   ;
+ 110:  !-- MOVE TO SAFE ;
+ 111:J PR[5:Safe Washer Side] 100% CNT50    ;
+ 112:  DO[146:ON :Robot Clear Wash]=ON ;
+ 113:   ;
+ 114:  END ;
+/POS
+/END
