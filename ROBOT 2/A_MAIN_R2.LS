@@ -49,7 +49,7 @@ AUTO_SINGULARITY_HEADER;
   37:  IF (DI[72:ON :G1 Part Present]=OFF AND DI[80:OFF:G2 Part Present]=OFF AND DI[401:OFF:G2 from 260 OK] OR DI[440]),CALL A_Washer ;
   44:   ;
   45:  !-- Deadnest Exchange ;
-  46:  IF (DI[72:ON :G1 Part Present] AND DO[428:OFF:G1 BCR2 OK]),CALL Deadnest ;
+  46:  IF (DI[72:ON :G1 Part Present] AND DO[422]),CALL Deadnest ;
   44:   ;
   45:  !-- Temperature ;
   46:  IF (DI[72:ON :G1 Part Present] AND DO[428:OFF:G1 BCR2 OK]),CALL A_Temperature ;

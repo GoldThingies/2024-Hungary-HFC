@@ -37,7 +37,7 @@ AUTO_SINGULARITY_HEADER;
   12:   ;
   13:  !-- PLACE 1, PICK NONE ;
   14:  !----------------------------- ;
-  15:  IF (DI[214:OFF:Temp Part 1 Present]=OFF AND DI[215:ON :Temp Part 2 Present]=OFF AND DI[72:ON :G1 Part Present]=ON) THEN ;
+  15:  IF (DI[270]=OFF AND DI[72:ON :G1 Part Present]=ON) THEN ;
   16:  !-- CHANGE TOOL AND USER FRAME ;
   17:  UTOOL_NUM=4 ;
   18:  UFRAME_NUM=1 ;
