@@ -26,7 +26,7 @@ AUTO_SINGULARITY_HEADER;
    1:  !-- 2677 DANA ;
    2:  !-- 7 16 24 ;
    3:  !-- GRSL Reference Part Sequence ;
-   4:  !-- ******* ;
+   4:  !-- ********* ;
    5:  !----------------------------- ;
    6:   ;
    7:  IF (DI[205:ON :Reference Part Presen]=ON AND DI[206:OFF:Reference Part Reques]=ON AND DI[72:ON :G1 Part Present]=OFF AND DI[80:OFF:G2 Part Present]=OFF) THEN ;
